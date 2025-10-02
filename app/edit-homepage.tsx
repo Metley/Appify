@@ -60,12 +60,23 @@ export default function AddHomepageScreen() {
     }
   };
 
+  const checkContentType = (input: string) => {
+    if (!input) return false;
+    if (input.includes("image")) return true;
+    if (input.includes("icon")) return true;
+    return false;
+  };
+
   const handleFetchImage = async (input: string) => {
     if (!input) return;
     try {
       const response = await fetch(input.toLowerCase() + "/favicon.ico");
+      const contentType = (
+        response.headers.get("content-type") || ""
+      ).toLowerCase();
 
-      if (response.headers.get("content-type") === "image/x-icon") {
+      // Check if response content-type is image or icon
+      if (checkContentType(contentType)) {
         setImage(input.toLowerCase() + "/favicon.ico");
         setErrorImageMessage("");
       } else {

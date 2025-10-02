@@ -42,21 +42,35 @@ export default function AddHomepageScreen() {
     }
   };
 
+  const checkContentType = (input: string) => {
+    if (!input) return false;
+    if (input.includes("image")) return true;
+    if (input.includes("icon")) return true;
+    return false;
+  };
+
   const handleFetchImage = async (input: string) => {
     if (!input) return;
     setDebugMessage("");
     try {
       const response = await fetch(input.toLowerCase() + "/favicon.ico");
-
-      if (response.headers.get("content-type") === "image/x-icon") {
+      const contentType = (
+        response.headers.get("content-type") || ""
+      ).toLowerCase();
+      // Check if response content-type is image or icon
+      if (checkContentType(contentType)) {
         setImage(input.toLowerCase() + "/favicon.ico");
         setErrorImageMessage("");
       } else {
         setImage(
           "https://img.icons8.com/?size=100&id=j1UxMbqzPi7n&format=png&color=000000"
         );
-        setErrorImageMessage("Favicon not found");
+        setErrorImageMessage("Favicon not found because of Content-Type");
       }
+
+      // Skip Content-Type check
+      // setImage(input.toLowerCase() + "/favicon.ico");
+      // setErrorImageMessage("");
     } catch (error) {
       setImage(
         "https://img.icons8.com/?size=100&id=j1UxMbqzPi7n&format=png&color=000000"
