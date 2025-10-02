@@ -29,10 +29,7 @@ const AppContent = () => {
             name="index"
             options={{ title: "Home", headerShown: false }}
           />
-          <Stack.Screen
-            name="browser"
-            options={{ headerShown: false, statusBarHidden: true }}
-          />
+          <Stack.Screen name="browser" options={{ headerShown: false }} />
           <Stack.Screen
             name="add-homepage"
             options={{
