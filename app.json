@@ -2,7 +2,7 @@
   "expo": {
     "name": "Appify",
     "slug": "appify",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
     "scheme": "appify",
@@ -14,7 +14,7 @@
     "android": {
       "edgeToEdgeEnabled": true,
       "android": {
-        "versionCode": 3
+        "versionCode": 4
       },
       "package": "com.metley.appify",
       "usesCleartextTraffic": true
