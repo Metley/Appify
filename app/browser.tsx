@@ -39,14 +39,38 @@ export default function BrowserScreen() {
       <View
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        {navbar && (
+        {navbar ? (
           <Appbar.Header>
             <Appbar.BackAction onPress={() => router.replace("/")} />
             <Appbar.Content title={name} />
           </Appbar.Header>
+        ) : (
+          <Appbar.Action />
         )}
 
-        <WebView source={{ uri: url }} mixedContentMode="always" />
+        <WebView
+          source={{ uri: url }}
+          mixedContentMode="always"
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          onShouldStartLoadWithRequest={(request) => {
+            console.log("Request URL:", request.url);
+            return true;
+          }}
+          onReceivedSslError={(event: any) => {
+            console.warn("SSL Error:", event.nativeEvent.description);
+            event.preventDefault();
+            event.proceed();
+          }}
+          onError={(syntheticEvent) => {
+            const { nativeEvent } = syntheticEvent;
+            console.error("WebView error: ", nativeEvent);
+          }}
+          onHttpError={(syntheticEvent) => {
+            const { nativeEvent } = syntheticEvent;
+            console.error("HTTP error: ", nativeEvent);
+          }}
+        />
       </View>
     </>
   );
