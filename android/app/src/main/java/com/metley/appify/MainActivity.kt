@@ -11,6 +11,12 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 import expo.modules.ReactActivityDelegateWrapper
 
+// Webview
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.net.http.SslError
+import android.webkit.SslErrorHandler
+
 class MainActivity : ReactActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     // Set the theme to AppTheme BEFORE onCreate to support
@@ -20,6 +26,23 @@ class MainActivity : ReactActivity() {
     // @generated begin expo-splashscreen - expo prebuild (DO NOT MODIFY) sync-f3ff59a738c56c9a6119210cb55f0b613eb8b6af
     SplashScreenManager.registerOnActivity(this)
     // @generated end expo-splashscreen
+
+
+    // Webview
+       val webView = WebView(this)
+    webView.settings.javaScriptEnabled = true
+    webView.settings.domStorageEnabled = true
+
+    // Set the custom WebViewClient
+    webView.webViewClient = CustomWebViewClient()
+
+    // Load a URL
+    webView.loadUrl("https://self-signed.badssl.com/")
+
+    // Set the WebView as the content view
+    setContentView(webView)
+
+
     super.onCreate(null)
   }
 
@@ -62,4 +85,17 @@ class MainActivity : ReactActivity() {
       // because it's doing more than [Activity.moveTaskToBack] in fact.
       super.invokeDefaultOnBackPressed()
   }
+}
+
+class CustomWebViewClient : WebViewClient() {
+    override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+        // Log the SSL error for debugging
+        println("SSL Error: ${error?.toString()}")
+
+        // Uncomment the following line to bypass SSL errors (not recommended for production)
+        handler?.proceed()
+
+        // Uncomment the following line to block the request
+        // handler?.cancel()
+    }
 }
