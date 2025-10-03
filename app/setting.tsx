@@ -8,7 +8,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import {
   Appbar,
@@ -21,6 +21,7 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingScreen() {
   const router = useRouter();
@@ -28,6 +29,9 @@ export default function SettingScreen() {
   const { setThemePreference } = useSettingContext();
 
   const [themeMode, setThemeMode] = useState<ThemePreference>("System");
+  const [originalThemeMode, setOriginalThemeMode] =
+    useState<ThemePreference>("System");
+
   const [headerMode, setHeaderMode] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<string>("App");
   const [sortPrefrence, setSortPrefrence] = useState<SortPrefrence>("CUSTOM");
@@ -38,6 +42,20 @@ export default function SettingScreen() {
   useEffect(() => {
     fetchHomepages();
     fetchAppSetting();
+
+    const backAction = () => {
+      setThemePreference(originalThemeMode);
+
+      router.navigate("/");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   const fetchHomepages = async () => {
@@ -58,6 +76,7 @@ export default function SettingScreen() {
         const appSetting = JSON.parse(appSettingStorage);
         setAppSetting(appSetting);
         setThemeMode(appSetting.theme);
+        setOriginalThemeMode(appSetting.theme);
         setHeaderMode(appSetting.navBar);
         setViewMode(appSetting.viewStyle);
         setSortPrefrence(appSetting.sortPrefrence);
@@ -150,13 +169,24 @@ export default function SettingScreen() {
     return a.custom_position - b.custom_position;
   });
 
+  const currentTheme = (settingTheme: ThemePreference) => {
+    setThemeMode(settingTheme);
+    setThemePreference(settingTheme);
+  };
+
+  const cancelSetting = () => {
+    setThemePreference(originalThemeMode);
+
+    router.navigate("/");
+  };
+
   return (
     <>
-      <View
+      <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <Appbar.Header>
-          <Appbar.BackAction onPress={() => router.navigate("/")} />
+        <Appbar.Header statusBarHeight={0}>
+          <Appbar.BackAction onPress={cancelSetting} />
           <Appbar.Content title="Setting" />
         </Appbar.Header>
         <ScrollView style={{ marginBottom: 20 }}>
@@ -171,7 +201,9 @@ export default function SettingScreen() {
             </Text>
             <SegmentedButtons
               value={themeMode}
-              onValueChange={setThemeMode}
+              onValueChange={(current) =>
+                currentTheme(current as ThemePreference)
+              }
               buttons={[
                 {
                   value: "System",
@@ -270,18 +302,14 @@ export default function SettingScreen() {
           />
         </ScrollView>
         <View style={styles.buttonView}>
-          <Button
-            mode="outlined"
-            style={styles.button}
-            onPress={() => router.navigate("/")}
-          >
+          <Button mode="outlined" style={styles.button} onPress={cancelSetting}>
             Cancel
           </Button>
           <Button mode="contained" style={styles.button} onPress={saveSetting}>
             Save
           </Button>
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -325,7 +353,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    marginBottom: 25,
     marginTop: 20,
   },
   button: {
