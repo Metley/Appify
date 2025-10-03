@@ -35,7 +35,6 @@ const AppContent = () => {
             options={{
               title: "Add",
               headerShown: false,
-              navigationBarHidden: true,
             }}
           />
           <Stack.Screen
