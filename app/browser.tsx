@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { WebView } from "react-native-webview";
 
@@ -36,16 +37,14 @@ export default function BrowserScreen() {
 
   return (
     <>
-      <View
+      <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        {navbar ? (
+        {navbar && (
           <Appbar.Header>
             <Appbar.BackAction onPress={() => router.replace("/")} />
             <Appbar.Content title={name} />
           </Appbar.Header>
-        ) : (
-          <Appbar.Action />
         )}
 
         <WebView
@@ -71,7 +70,7 @@ export default function BrowserScreen() {
             console.error("HTTP error: ", nativeEvent);
           }}
         />
-      </View>
+      </SafeAreaView>
     </>
   );
 }

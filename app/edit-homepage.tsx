@@ -13,6 +13,7 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddHomepageScreen() {
   const [editName, setEditName] = useState<string>("");
@@ -161,10 +162,10 @@ export default function AddHomepageScreen() {
   };
 
   return (
-    <View
+    <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <Appbar.Header>
+      <Appbar.Header statusBarHeight={0}>
         <Appbar.BackAction onPress={() => router.navigate("/")} />
         <Appbar.Content title="Edit Homepage" />
       </Appbar.Header>
@@ -241,7 +242,7 @@ export default function AddHomepageScreen() {
           </Portal>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
